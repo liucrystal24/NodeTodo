@@ -1,2 +1,2 @@
 # NodeTodo
-NodeTodo study
+Node Todolist v0.1

@@ -1,59 +1,78 @@
 const fs = require('fs')
-const path = 'D:\\nodestudy\\db'
+const path = require('path')
+const filepath = path.join(__dirname, 'db')
 
 const verb = process.argv[2]
 const content = process.argv[3]
 const content2 = process.argv[4]
 
-if (fs.existsSync(path)) {
-  switch (verb) {
-    case 'add':
-      const list = JSON.parse(fs.readFileSync(path))
-      list.push([content, false])
-      fs.writeFileSync(path, JSON.stringify(list))
-      break;
+let list
+const n = content
 
-    case 'delete':
-      const n = content - 1
-      const list2 = JSON.parse(fs.readFileSync(path))
-      list2.splice(n, 1)
-      fs.writeFileSync(path, JSON.stringify(list2))
-      break;
 
-    case 'update':
-      const m = content - 1
-      const list3 = JSON.parse(fs.readFileSync(path))
-      list3[m][0] = content2
-      fs.writeFileSync(path, JSON.stringify(list3))
-      break;
+ebsureFileExits()
+fetch()
 
-    case 'list':
-      const list4 = JSON.parse(fs.readFileSync(path))
-      console.log(list4)
-      break;
+switch (verb) {
+  case 'add':
+    addTask()
+    break;
 
-    case 'done':
-      const x = content - 1
-      const list5 = JSON.parse(fs.readFileSync(path))
-      list5[x][1] = true
-      fs.writeFileSync(path, JSON.stringify(list5))
-      break;
+  case 'delete':
+    deleteTask(n)
+    break;
 
-    default:
-      console.log(`没有${verb}指令`)
-      break;
+  case 'update':
+    updateTask(n)
+    break;
+
+  case 'list':
+    break;
+
+  case 'done':
+    doneTask(n)
+    break;
+
+  default:
+    console.log(`没有${verb}指令`)
+    break;
+}
+
+writedb()
+displayTask()
+
+//辅助函数
+function ebsureFileExits() {
+  if (!fs.existsSync(filepath)) {
+    list = []
+    writedb()
   }
-  console.log(JSON.parse(fs.readFileSync(path)));
-} else {
-  switch (verb) {
-    case 'add':
-      const list = []
-      list.push([content, false])
-      fs.writeFileSync(path, JSON.stringify(list))
-      break;
+}
 
-    default:
-      console.log(`没有任务需要做，请先执行添加操作\n -> node todo add <content>`)
-      break;
-  }
+function fetch() {
+  list = JSON.parse(fs.readFileSync(filepath))
+}
+
+function addTask() {
+  list.push([content, false])
+}
+
+function writedb() {
+  fs.writeFileSync(filepath, JSON.stringify(list))
+}
+
+function deleteTask(n) {
+  list.splice(n - 1, 1)
+}
+
+function updateTask(n) {
+  list[n - 1][0] = content2
+}
+
+function doneTask(n) {
+  list[n - 1][1] = true
+}
+
+function displayTask() {
+  console.log(JSON.parse(fs.readFileSync(filepath)));
 }
